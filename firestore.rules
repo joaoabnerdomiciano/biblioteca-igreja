@@ -1,0 +1,81 @@
+rules_version = '2';
+
+// Regras de acesso do banco da biblioteca.
+// Cole este arquivo em: Console do Firebase > Firestore Database > Regras > Publicar.
+// TROQUE o e-mail abaixo pelo e-mail do administrador (o mesmo de app/lib/config.dart).
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function emailAdmin() {
+      return 'SEU-EMAIL@gmail.com';
+    }
+
+    function logado() {
+      return request.auth != null
+        && request.auth.token.email != null
+        && request.auth.token.email_verified == true;
+    }
+
+    function meuEmail() {
+      return request.auth.token.email.lower();
+    }
+
+    function admin() {
+      return logado() && meuEmail() == emailAdmin().lower();
+    }
+
+    function voluntario() {
+      return admin() || (logado() && exists(/databases/$(database)/documents/voluntarios/$(meuEmail())));
+    }
+
+    // Livros: leitura PÚBLICA (o catálogo do GitHub Pages lê daqui).
+    // Não guarde dados pessoais nesta coleção.
+    match /livros/{id} {
+      allow read: if true;
+      allow create, update: if voluntario();
+      allow delete: if admin();
+    }
+
+    // Fotos de capa tiradas no app (também públicas, para o catálogo).
+    match /capas/{id} {
+      allow read: if true;
+      allow write: if voluntario();
+    }
+
+    // Daqui para baixo, somente voluntários. Nada é público.
+    match /exemplares/{id} {
+      allow read, create, update: if voluntario();
+      allow delete: if admin();
+    }
+
+    match /leitores/{id} {
+      allow read, create, update: if voluntario();
+      allow delete: if admin();
+    }
+
+    match /emprestimos/{id} {
+      allow read, create, update: if voluntario();
+      allow delete: if admin();
+    }
+
+    match /reservas/{id} {
+      allow read, write: if voluntario();
+    }
+
+    match /config/geral {
+      allow read: if voluntario();
+      allow write: if admin();
+    }
+
+    match /config/contadores {
+      allow read, write: if voluntario();
+    }
+
+    // Lista de e-mails liberados. Cada pessoa só consegue ver o próprio registro.
+    match /voluntarios/{email} {
+      allow get: if admin() || (logado() && meuEmail() == email);
+      allow list, write: if admin();
+    }
+  }
+}
