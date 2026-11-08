@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Catálogo da Biblioteca</title>
+  <meta name="description" content="Veja os livros da biblioteca da igreja e quais estão disponíveis.">
+  <meta name="theme-color" content="#8d4b2f">
+  <link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+  <header class="topo">
+    <div class="topo-conteudo">
+      <p class="sobretitulo">Catálogo</p>
+      <h1 id="nome">Biblioteca da Igreja</h1>
+      <p class="resumo" id="resumo">Carregando livros…</p>
+    </div>
+  </header>
+
+  <main>
+    <div id="aviso-demo" class="aviso" hidden>
+      Modo demonstração: estes livros são de exemplo. Configure o arquivo <code>config.js</code> para mostrar o acervo real.
+    </div>
+
+    <div class="busca">
+      <svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M15.5 14h-.8l-.3-.3A6.5 6.5 0 1 0 9.5 16a6.5 6.5 0 0 0 4.2-1.6l.3.3v.8l5 5 1.5-1.5-5-5Zm-6 0A4.5 4.5 0 1 1 14 9.5 4.5 4.5 0 0 1 9.5 14Z"/></svg>
+      <input id="busca" type="search" placeholder="Buscar por título ou autor" autocomplete="off" aria-label="Buscar livro">
+    </div>
+
+    <div class="filtros" id="filtros" role="group" aria-label="Filtrar por categoria"></div>
+
+    <label class="so-disponiveis">
+      <input type="checkbox" id="so-disponiveis"> Mostrar só os disponíveis
+    </label>
+
+    <section id="destaques" hidden>
+      <h2>Sugestões do mês</h2>
+      <div class="destaques" id="lista-destaques"></div>
+    </section>
+
+    <section>
+      <h2 id="titulo-lista">Todos os livros</h2>
+      <div class="lista" id="lista"></div>
+      <p class="vazio" id="vazio" hidden>Nenhum livro encontrado.</p>
+    </section>
+  </main>
+
+  <footer>
+    <p id="como-pegar"></p>
+  </footer>
+
+  <dialog id="detalhe">
+    <form method="dialog"><button class="fechar" aria-label="Fechar">×</button></form>
+    <div id="detalhe-conteudo"></div>
+  </dialog>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
