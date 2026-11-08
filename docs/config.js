@@ -12,9 +12,9 @@ export const CONFIG = {
   // (Console do Firebase > Configurações do projeto > Seus apps > Web).
   // Enquanto estiver "COLE-AQUI", a página mostra livros de demonstração.
   firebase: {
-    apiKey: 'AIzaSyDw9PCuKA8WfRyUSd4oAb3HHcZcNOeLmXY',
-    authDomain: 'biblioteca-igreja-adcs.firebasestorage.app',
+    apiKey: 'AIzaSyDKWBii9U6KfNGXmzasv13YoDA2WSL5sGM',
+    authDomain: 'biblioteca-igreja-adcs.firebaseapp.com',
     projectId: 'biblioteca-igreja-adcs',
-    appId: '1:992191695101:android:6acf14015e5764f3fa9694',
+    appId: '1:992191695101:web:d319b9d0614a3725fa9694',
   },
 };
