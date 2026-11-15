@@ -53,8 +53,12 @@ jobs:
         run: |
           mkdir -p ~/.android
           if [ -n "$KEYSTORE_B64" ]; then
-            # Remove espaços e quebras de linha que entram ao copiar/colar
-            if ! printf '%s' "$KEYSTORE_B64" | tr -d ' \t\r\n' | base64 -d > ~/.android/debug.keystore 2>/dev/null; then
+            # Limpa o que costuma entrar ao copiar/colar: linhas "-----BEGIN/END-----"
+            # (certutil do Windows), aspas, espaços e quebras de linha.
+            LIMPO=$(printf '%s' "$KEYSTORE_B64" | tr -d '\r' | grep -v -- '-----' | tr -d ' \t\n"'"'")
+            INVALIDOS=$(printf '%s' "$LIMPO" | tr -d 'A-Za-z0-9+/=' | fold -w1 | sort -u | tr -d '\n')
+            if [ -n "$INVALIDOS" ] || ! printf '%s' "$LIMPO" | base64 -d > ~/.android/debug.keystore 2>/dev/null; then
+              echo "Tamanho do texto: ${#LIMPO} caracteres. Caracteres que não deveriam estar lá: '${INVALIDOS}'"
               echo "::error::O secret KEYSTORE_B64 não é um texto base64 válido. Gere de novo (veja o README) e cole só o texto, sem aspas."
               exit 1
             fi
