@@ -46,6 +46,13 @@ jobs:
             sed -i 's#<queries>#<queries><intent><action android:name="android.intent.action.VIEW" /><data android:scheme="https" /></intent>#' "$M"
           fi
           grep -n "minSdk" android/app/build.gradle* || true
+          # O "lint" do Android quebra ao analisar plugins do Firebase com o Flutter 3.50
+          # (bug da ferramenta, não do app). Desliga só essa checagem.
+          for f in android/build.gradle.kts android/build.gradle; do
+            if [ -f "$f" ] && ! grep -q lintVital "$f"; then
+              printf '\nsubprojects {\n    tasks.matching { it.name.startsWith("lintVital") }.configureEach { enabled = false }\n}\n' >> "$f"
+            fi
+          done
 
       - name: Chave de assinatura
         env:
