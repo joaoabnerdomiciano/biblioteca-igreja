@@ -53,7 +53,15 @@ jobs:
         run: |
           mkdir -p ~/.android
           if [ -n "$KEYSTORE_B64" ]; then
-            echo "$KEYSTORE_B64" | base64 -d > ~/.android/debug.keystore
+            # Remove espaços e quebras de linha que entram ao copiar/colar
+            if ! printf '%s' "$KEYSTORE_B64" | tr -d ' \t\r\n' | base64 -d > ~/.android/debug.keystore 2>/dev/null; then
+              echo "::error::O secret KEYSTORE_B64 não é um texto base64 válido. Gere de novo (veja o README) e cole só o texto, sem aspas."
+              exit 1
+            fi
+            if ! keytool -list -keystore ~/.android/debug.keystore -storepass android -alias androiddebugkey > /dev/null 2>&1; then
+              echo "::error::O secret KEYSTORE_B64 foi lido, mas não é uma chave com senha 'android' e alias 'androiddebugkey'. Gere a chave com o comando do README."
+              exit 1
+            fi
             echo "Usando a chave salva nos Secrets."
           else
             echo "::warning::Secret KEYSTORE_B64 não configurado. Cada APK sairá com uma assinatura diferente e será preciso desinstalar o app antes de instalar a nova versão. Veja o README."
